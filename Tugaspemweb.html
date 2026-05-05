@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Manajemen Mahasiswa</title>
+
+    <style>
+        body {
+            margin: 0;/*Menghilangkan jarak default dari browser (biar full layar)*/
+            font-family: Arial, sans-serif; /*Mengatur font utama jadi Arial (kalau tidak ada pakai sans-serif).*/
+            background: linear-gradient(180deg, #ebe0cf, #0459ec); /*Memberi background gradasi warna dari putih kebiruan ke biru gelap dengan sudut 80 derajat.*/
+            display: flex; /*Mengaktifkan Flexbox (untuk mengatur posisi elemen dengan mudah).*/
+            justify-content: center; /*Membuat konten di tengah secara vertikal.*/
+            justify-content: center; /*Membuat konten di tengah secara vertikal.*/
+            align-items: center; /*Membuat konten di tengah secara vertikal.*/
+            min-height: 100vh; /*Tinggi minimal body = 100% tinggi layar.*/
+        }
+
+        .container { /* Wadah utama konten.*/
+            width: 800px; /*Lebar container 800px.*/
+        }
+
+        .card { /*Kotak form atau konten utama.*/
+            background: rgba(255, 255, 255, 0.1); /*Warna transparan (efek kaca).*/
+            backdrop-filter: blur(12px); /*Efek blur di belakang elemen (glassmorphism).*/
+            padding: 20px; /*Jarak isi ke tepi dalam (biar tidak mepet).*/
+            border-radius: 15px; /*Membuat sudut kotak jadi melengkung.*/
+            color: white; /*Warna teks putih.*/
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); /*Memberi bayangan agar terlihat melayang.*/
+            border: 1px solid rgba(255, 255, 255, 0.2); /*Memberi bingkai.*/
+        }
+
+        h2 { /*Menargetkan heading (judul).*/
+            margin-bottom: 15px; /*Memberi jarak bawah 15px*/
+            text-align: center; /*Membuat text menjadi ke tengah*/
+        }
+
+        .grid { /*Wadah untuk input form.*/
+            display: grid; /*Mengaktifkan CSS Grid.*/
+            grid-template-columns: 1fr 1fr;  /*Membagi jadi 2 kolom sama besar.*/
+            gap: 15px; /*Jarak antar elemen 15px.*/
+        }
+
+        input,
+        textarea,
+        select { /*Menargetkan semua input, textarea, dan dropdown.*/
+            width: 100%; /*Lebar penuh mengikuti container.*/
+            padding: 10px; /*Jarak dalam agar nyaman diketik.*/
+            border-radius: 8px; /*Membuat sudut sedikit melengkung.*/
+            background: #ffffff; /*Warna latar putih.*/
+            color: black;  /*Warna teks hitam.*/
+            outline: none; /*Menghilangkan garis saat diklik.*/
+            box-sizing: border-box; /*Upaya padding tidak menambah ukuran total elemen.*/
+            border: 1px solid rgba(0, 0, 0, 0.1); /*Menambahkan garis border.*/
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1); /*Memberi bayangan*/
+            transition: 0.2s; /*menambahkan transisi*/
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border: 1px solid #3b82f6; /*menambahkan border*/
+            box-shadow: 0 0 5px rgba(59, 130, 246, 0.5); /*menambahkan bayangan*/
+        }
+
+         textarea {
+            grid-column: span 2; /* membuat textarea mengambil 2 kolom (full lebar) */
+            resize: none; /* menonaktifkan fitur resize (tidak bisa ditarik) */
+        }
+
+        .full {
+            grid-column: span 2; /* elemen dengan class ini jadi full lebar (2 kolom) */
+        }
+
+        .ttl {
+            display: flex; /* membuat isi (tgl, bulan, tahun) berjajar horizontal */
+            gap: 5px; /* memberi jarak antar elemen di dalam ttl */
+        }
+        .ttl select {
+            width: 100%; /* setiap select memenuhi ruang masing-masing secara rata */
+        }
+        button {
+            padding: 10px; /* memberi ruang dalam tombol agar lebih besar */
+            border: none; /* menghilangkan garis default tombol */
+            border-radius: 8px; /* membuat sudut tombol jadi membulat */
+            cursor: pointer;  /* mengubah kursor jadi tangan saat diarahkan */
+            font-weight: bold; /* membuat teks tombol jadi tebal */
+        }
+        .submit {
+            background: #22c55e; /* warna hijau untuk tombol simpan */
+            color: white; /* warna teks putih agar kontras */
+        }
+        .reset {
+            background: #ef4444; /* warna merah untuk tombol reset */
+            color: white;  /* warna teks putih agar jelas */
+        }
+        /*TOPIK*/
+        .search { /* mengubah tampilan pada bagian search*/
+            margin-top: 15px; /*memberikan jarak atas*/
+            width: 100%; /*lebar elemen */
+        }
+        table { /*mengubah tampilan table*/
+            width: 100%; /*lebar elemen*/
+            margin-top: 15px; /*memberikan jarak atas*/
+            border-collapse: collapse; /*menggabungkan border tabel agar tidak doble*/
+            background: white; /*mengubah warna background*/
+            color: black; /*mengubah warna tabel*/
+        }
+        th,
+        td { /*mengatur header tabel dan isi tabel*/
+            padding: 10px; /*memberi jarak tepi*/
+            border: 1px solid #ddd; /*memberi garis border dan warna*/
+            text-align: center; /*buat teks menjadi tengah*/
+        }
+
+        .form-actions { /*class area untuk tombol*/
+            display: flex; /*untuk menyusun sejajar horizontal*/
+            gap: 10px; /*memberi jarak antar elemen*/
+            margin-top: 10px; /*memberi jarak bagian atas*/
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container"> <!--membuat container untuk isi halaman-->
+        <div class="card"> <!--membuat kotak untuk isi form-->
+
+            <h2>Manajemen Mahasiswa</h2> <!--judul halaman-->
+
+            <form id="formMhs"> <!--awal form input data-->
+
+                <div class="grid"> <!--tempat untuk layout-->
+
+                    <input type="text" id="nim" placeholder="NIM"> <!--input teks dan label teks NIM-->
+                    <input type="text" id="nama" placeholder="Nama Lengkap"> <!--input teks dan label teks Nama lengkap -->
+
+                    <textarea id="alamat" placeholder="Alamat"></textarea> <!--label teks alamat-->
+
+                    <select id="jk"> <!--membuat pilihan untuk bagian jenis kelamin-->
+                        <option value="">-- Pilih Jenis Kelamin --</option> <!--pilihan default -->
+                        <option>Pria</option> <!--opsi pilihan jenis kelamin laki laki-->
+                        <option>Wanita</option> <!--opsi pilihan jenis kelamin perempuan-->
+                    </select>
+
+                    <div class="ttl"> <!-- Mengurutkan Tanggal 1-31-->
+                        <select id="tgl"></select> <!-- Memilih tanggal-->
+                        <select id="bulan"></select> <!-- Memilih bulan-->
+                        <select id="tahun"></select> <!-- Memilih tahun-->
+                    </div>
+
+                    <input type="password" placeholder="Password" class="full"> <!-- Untuk bisa mengimput Password-->
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="submit">Simpan Data</button> <!--  Tombol Submit -->
+                    <button type="reset" class="reset">Reset</button> <!-- Tombol Reset-->
+                </div>
+
+            </form>
+
+            <input type="text" id="search" class="search" placeholder="Cari NIM / Nama">
+
+            <h3>Data Mahasiswa</h3> <!--Tabel Dibawah-->
+
+            <table id="table"> <!--membuat tabel-->
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>NIM</th>
+                        <th>Nama</th>
+                        <th>Alamat</th>
+                        <th>Jenis Kelamin</th>
+                        <th>Tanggal Lahir</th>
+                        <th>Opsi</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+
+        </div>
+    </div>
+
+<script>
+const form = document.getElementById("formMhs"); // ambil elemen form berdasarkan id
+const tableBody = document.querySelector("#table tbody"); // ambil bagian tbody tabel
+const searchInput = document.getElementById("search"); // ambil input pencarian
+
+let dataMahasiswa = JSON.parse(localStorage.getItem("mahasiswa")) || []; // ambil data dari localStorage atau array kosong
+
+// isi dropdown tanggal
+for (let i = 1; i <= 31; i++) { // looping angka 1 sampai 31
+    document.getElementById("tgl").innerHTML += `<option>${i}</option>`; // tambahkan option tanggal ke select
+}
+
+// bulan
+const bulanList = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
+    "Juli", "Agustus", "September", "Oktober", "November", "Desember"]; // array daftar bulan
+
+bulanList.forEach(b => { // looping setiap bulan
+    document.getElementById("bulan").innerHTML += `<option>${b}</option>`; // tambahkan option bulan
+});
+
+// tahun
+for (let i = 1995; i <= 2010; i++) { // looping tahun dari 1995 sampai 2010
+    document.getElementById("tahun").innerHTML += `<option>${i}</option>`; // tambahkan option tahun
+}
+
+// render table
+function renderTable(data) { // fungsi untuk menampilkan data ke tabel
+    tableBody.innerHTML = ""; // kosongkan isi tabel
+
+    data.forEach((mhs, index) => { // looping setiap data mahasiswa
+        tableBody.innerHTML += `
+        <tr>
+            <td>${index + 1}</td> <!-- nomor urut -->
+            <td>${mhs.nim}</td> <!-- tampilkan nim -->
+            <td>${mhs.nama}</td> <!-- tampilkan nama -->
+            <td>${mhs.alamat}</td> <!-- tampilkan alamat -->
+            <td>${mhs.jenisKelamin}</td> <!-- tampilkan jenis kelamin -->
+            <td>${mhs.tanggalLahir}</td> <!-- tampilkan tanggal lahir -->
+            <td>
+                <button onclick="hapusData(${index})">Hapus</button> <!-- tombol hapus data -->
+            </td>
+        </tr>`; // tambah baris ke tabel
+    });
+}
+
+// submit
+form.addEventListener("submit", function (e) { // event ketika form disubmit
+    e.preventDefault(); // mencegah reload halaman
+
+    const nim = document.getElementById("nim").value.trim(); // ambil nilai nim
+    const nama = document.getElementById("nama").value.trim(); // ambil nama
+    const alamat = document.getElementById("alamat").value.trim(); // ambil alamat
+    const jk = document.getElementById("jk").value; // ambil jenis kelamin
+
+    const tgl = document.getElementById("tgl").value; // ambil tanggal
+    const bulan = document.getElementById("bulan").value; // ambil bulan
+    const tahun = document.getElementById("tahun").value; // ambil tahun
+
+    if (!nim || !nama) { // validasi jika nim atau nama kosong
+        alert("NIM dan Nama wajib diisi!"); // tampilkan alert
+        return; // hentikan proses
+    }
+
+    const data = { // buat object data mahasiswa
+        nim, // simpan nim
+        nama, // simpan nama
+        alamat, // simpan alamat
+        jenisKelamin: jk, // simpan jenis kelamin
+        tanggalLahir: `${tgl} ${bulan} ${tahun}` // gabungkan tanggal lahir
+    };
+
+    dataMahasiswa.push(data); // tambahkan ke array
+    localStorage.setItem("mahasiswa", JSON.stringify(dataMahasiswa)); // simpan ke localStorage
+
+    form.reset(); // reset form input
+    renderTable(dataMahasiswa); // tampilkan ulang tabel
+});
+
+// hapus
+function hapusData(index) { // fungsi hapus data berdasarkan index
+    if (confirm("Yakin hapus data?")) { // konfirmasi sebelum hapus
+        dataMahasiswa.splice(index, 1); // hapus data dari array
+        localStorage.setItem("mahasiswa", JSON.stringify(dataMahasiswa)); // update localStorage
+        renderTable(dataMahasiswa); // refresh tabel
+    }
+}
+
+// search
+searchInput.addEventListener("input", function () { // event saat mengetik di search
+    const keyword = this.value.toLowerCase(); // ambil keyword dan ubah ke huruf kecil
+
+    const hasil = dataMahasiswa.filter(mhs => // filter data mahasiswa
+        mhs.nim.toLowerCase().includes(keyword) || // cek nim
+        mhs.nama.toLowerCase().includes(keyword) // cek nama
+    );
+
+    renderTable(hasil); // tampilkan hasil pencarian
+});
+
+// load awal
+renderTable(dataMahasiswa); // tampilkan data saat pertama kali halaman dibuka
+</script>
+</body>
+
+</html>
